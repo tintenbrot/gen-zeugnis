@@ -1,0 +1,105 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+# Depends: pip3 install docxtpl
+#
+# https://docxtpl.readthedocs.io/en/latest/
+
+import argparse
+from docxtpl import DocxTemplate
+import csv
+import os
+
+def detectdelimiter(filename):
+    headline = ''
+    possible_delimiters = { ',', ';', '|', '\t'}
+    with open(filename, encoding='cp1252') as f:
+        headline = f.readline()
+    delimiter = ';'
+    count = 0
+    for current_delimiter in possible_delimiters:
+        if headline.count(current_delimiter) > count:
+            count = headline.count(current_delimiter)
+            delimiter = current_delimiter
+    return delimiter
+
+def replaceMark(mark):
+    readable = mark
+    if mark == '1':
+        readable = 'sehr gut'
+    elif mark == '2':
+        readable = 'gut'
+    elif mark == '3':
+        readable = 'befriedigend'
+    elif mark == '4':
+        readable = 'ausreichend'
+    elif mark == '5':
+        readable = 'mangelhaft'
+    elif mark == '6':
+        readable = 'ungenügend'
+    return readable
+
+def main():
+    parser = argparse.ArgumentParser(description='''Generate individual reports from csv-table and docx-template.
+    												Use {{<var>}} in docx for substitution. Eg {{VN}} or {{NN}}''',
+                                        epilog='Version 1.0. © 2023 by Daniel Ache')
+    parser.add_argument('csvfile', 
+                            help="Name of the file that holds the list of marks")
+    parser.add_argument('docxfile', 
+                            help="Name of the template file")
+    parser.add_argument('--outputfolder', default='reports',
+                    help='foldername for output files')
+    parser.add_argument('-mr', '--marksreadable', default=0)
+
+    args = parser.parse_args()
+
+    csvFilename = args.csvfile
+    docxFilename = args.docxfile
+    outputFolder = args.outputfolder
+    substituteMarks = args.marksreadable
+
+    if not os.path.exists(csvFilename):
+        print("csv-file: >" + csvFilename + "< does not exits")
+        return
+    if not os.path.exists(docxFilename):
+        print("docx-file: >" + docxFilename + "< does not exits")
+        return
+        
+    if not os.path.exists(outputFolder):
+        os.makedirs(outputFolder)
+
+    csvDelimiter = detectdelimiter(csvFilename)
+    print("Detected delimiter: '" + csvDelimiter + "'")
+
+    with open(csvFilename, encoding='cp1252') as csvdatei:
+        csv_reader_object = csv.reader(csvdatei, delimiter=csvDelimiter)
+        iRowCount = 0
+        for row in csv_reader_object:
+            iRowCount+=1
+            if iRowCount == 1:
+                header = row
+            else:
+                context = { }
+                i = 0
+                for item in header:
+                    if (header[i] == 'missed'):
+                        context[header[i]] = row[i]
+                    elif (header[i] == 'excused'):
+                        context[header[i]] = row[i]
+                    elif (header[i] == 'nonexcused'):
+                        context[header[i]] = row[i]
+                    else:
+                        if substituteMarks:
+                            context[header[i]] = replaceMark(row[i])
+                        else:
+                            context[header[i]] = row[i]
+                    i+=1
+                outputfilename = outputFolder + "/" + context['NN'] + "_" + context['VN'] + ".docx"
+                doc = DocxTemplate(docxFilename)
+                doc.render(context)
+                doc.save(outputfilename)
+                print('Wrote file: >' + outputfilename + "<")
+
+
+if __name__ == "__main__":
+    main()
