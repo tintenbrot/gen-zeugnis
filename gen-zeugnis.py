@@ -7,6 +7,7 @@
 
 import argparse
 from docxtpl import DocxTemplate
+import zipfile
 import csv
 import os
 
@@ -39,6 +40,38 @@ def replaceMark(mark):
         readable = 'ungenügend'
     return readable
 
+def render_odt_template(odtFilename, outputfilename, context):
+    with zipfile.ZipFile(odtFilename) as inzip, zipfile.ZipFile(outputfilename, "w") as outzip:
+        # Iterate the input files
+        for inzipinfo in inzip.infolist():
+            # Read input file
+            with inzip.open(inzipinfo) as infile:
+                if inzipinfo.filename == "content.xml":
+                    content = infile.read()
+                    # Modify the content of the file by replacing a string
+                    for placeholder, value in context.items():
+                        to_replace = '{{' + placeholder + '}}'
+                        content = content.replace(to_replace.encode('utf-8'), value.encode('utf-8'))
+                    # Write content
+                    outzip.writestr(inzipinfo.filename, content)
+                else: # Other file, dont want to modify => just copy it
+                    outzip.writestr(inzipinfo.filename, infile.read())
+    return
+
+def createReport(outputFolder, filename_path, context):
+    filename, file_extension = os.path.splitext(filename_path)
+    if (file_extension == '.docx'):
+        outputfilename = outputFolder + "/" + context['NN'] + "_" + context['VN'] + ".docx"
+        doc = DocxTemplate(filename_path)
+        doc.render(context)
+        doc.save(outputfilename)
+        print('Wrote file: >' + outputfilename + "<")
+    if (file_extension == ".odt"):
+        outputfilename = outputFolder + "/" + context['NN'] + "_" + context['VN'] + ".odt"
+        render_odt_template(filename_path, outputfilename, context)
+        print('Wrote file: >' + outputfilename + "<")
+    return
+
 def main():
     parser = argparse.ArgumentParser(description='''Generate individual reports from csv-table and docx-template.
     												Use {{<var>}} in docx for substitution. Eg {{VN}} or {{NN}}''',
@@ -46,7 +79,7 @@ def main():
     parser.add_argument('csvfile', 
                             help="Name of the file that holds the list of marks")
     parser.add_argument('docxfile', 
-                            help="Name of the template file")
+                            help="Name of the template file (This can be .docx or .odt)")
     parser.add_argument('--outputfolder', default='reports',
                     help='foldername for output files')
     parser.add_argument('-mr', '--marksreadable', default=0)
@@ -94,11 +127,7 @@ def main():
                         else:
                             context[header[i]] = row[i]
                     i+=1
-                outputfilename = outputFolder + "/" + context['NN'] + "_" + context['VN'] + ".docx"
-                doc = DocxTemplate(docxFilename)
-                doc.render(context)
-                doc.save(outputfilename)
-                print('Wrote file: >' + outputfilename + "<")
+                createReport(outputFolder, docxFilename, context)
 
 
 if __name__ == "__main__":
