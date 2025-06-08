@@ -77,6 +77,13 @@ Jede/r Schüler:in erhält eine eigene Datei (benannt nach `NN` und `VN`) im ang
 
 Beispiel für eine Zeugnissvorlage und eine passende CSV findest du oben oder kannst sie selbst anpassen.
 
+
+## Windows EXE-Datei aus .py Datei erzeugen
+
+```bash
+$ pyinstaller -F gen-zeugnis.py
+```
+
 ---
 
 **Autor:** Daniel Ache  
