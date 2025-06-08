@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Depends: pip3 install docxtpl
+# Depends: pip3 install docxtpl pandas openpyxl
 #
 # https://docxtpl.readthedocs.io/en/latest/
 
 import argparse
 from docxtpl import DocxTemplate
-import zipfile
+import zipfile       # needed for patching odt
+import pandas as pd  # needed for reading xlsx and ods
 import csv
 import os
 
@@ -72,12 +73,65 @@ def createReport(outputFolder, filename_path, context):
         print('Wrote file: >' + outputfilename + "<")
     return
 
+def readMarksFile(filename_path, substituteMarks):
+    marksTable = [ ]
+    filename, file_extension = os.path.splitext(filename_path)
+    if ((file_extension == '.ods') or (file_extension == '.xlsx')):
+        # read by default 1st sheet of an excel file
+        dataframe1 = pd.read_excel(filename_path)
+        rowcount = dataframe1.shape[0]
+        for i in range(0,rowcount):
+            context = { }
+            for header in dataframe1.columns:
+                if (header == 'missed'):
+                    context[header] = str(dataframe1.at[i, header])
+                elif (header == 'excused'):
+                    context[header] = str(dataframe1.at[i, header])
+                elif (header == 'nonexcused'):
+                    context[header] = str(dataframe1.at[i, header])
+                else:
+                    if substituteMarks:
+                        context[header] = replaceMark(str(dataframe1.at[i, header]))
+                    else:
+                        context[header] = str(dataframe1.at[i, header])
+            marksTable.append(context)
+    if (file_extension == '.csv'):
+        csvDelimiter = detectdelimiter(filename_path)
+        print("Detected delimiter: '" + csvDelimiter + "'")
+        
+        with open(filename_path, encoding='cp1252') as csvdatei:
+            csv_reader_object = csv.reader(csvdatei, delimiter=csvDelimiter)
+            iRowCount = 0
+            for row in csv_reader_object:
+                iRowCount+=1
+                if iRowCount == 1:
+                    header = row
+                else:
+                    context = { }
+                    i = 0
+                    for item in header:
+                        if (header[i] == 'missed'):
+                            context[header[i]] = row[i]
+                        elif (header[i] == 'excused'):
+                            context[header[i]] = row[i]
+                        elif (header[i] == 'nonexcused'):
+                            context[header[i]] = row[i]
+                        else:
+                            if substituteMarks:
+                                context[header[i]] = replaceMark(row[i])
+                            else:
+                                context[header[i]] = row[i]
+                        i+=1
+                    marksTable.append(context)
+
+    return marksTable
+
 def main():
     parser = argparse.ArgumentParser(description='''Generate individual reports from csv-table and docx-template.
     												Use {{<var>}} in docx for substitution. Eg {{VN}} or {{NN}}''',
-                                        epilog='Version 1.0. © 2023 by Daniel Ache')
+                                        epilog='Version 1.0. © 2023-2025 by Daniel Ache')
     parser.add_argument('csvfile', 
-                            help="Name of the file that holds the list of marks")
+                            help="Name of the file that holds the list of marks (This can be .csv, .xlsx or .ods)")
     parser.add_argument('docxfile', 
                             help="Name of the template file (This can be .docx or .odt)")
     parser.add_argument('--outputfolder', default='reports',
@@ -101,34 +155,9 @@ def main():
     if not os.path.exists(outputFolder):
         os.makedirs(outputFolder)
 
-    csvDelimiter = detectdelimiter(csvFilename)
-    print("Detected delimiter: '" + csvDelimiter + "'")
-
-    with open(csvFilename, encoding='cp1252') as csvdatei:
-        csv_reader_object = csv.reader(csvdatei, delimiter=csvDelimiter)
-        iRowCount = 0
-        for row in csv_reader_object:
-            iRowCount+=1
-            if iRowCount == 1:
-                header = row
-            else:
-                context = { }
-                i = 0
-                for item in header:
-                    if (header[i] == 'missed'):
-                        context[header[i]] = row[i]
-                    elif (header[i] == 'excused'):
-                        context[header[i]] = row[i]
-                    elif (header[i] == 'nonexcused'):
-                        context[header[i]] = row[i]
-                    else:
-                        if substituteMarks:
-                            context[header[i]] = replaceMark(row[i])
-                        else:
-                            context[header[i]] = row[i]
-                    i+=1
-                createReport(outputFolder, docxFilename, context)
-
+    marksTable = readMarksFile(csvFilename, substituteMarks)
+    for context in marksTable:
+        createReport(outputFolder, docxFilename, context)
 
 if __name__ == "__main__":
     main()
