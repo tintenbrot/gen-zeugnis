@@ -127,37 +127,40 @@ def readMarksFile(filename_path, substituteMarks):
     return marksTable
 
 def main():
-    parser = argparse.ArgumentParser(description='''Generate individual reports from csv-table and docx-template.
-    												Use {{<var>}} in docx for substitution. Eg {{VN}} or {{NN}}''',
-                                        epilog='Version 1.0. © 2023-2025 by Daniel Ache')
-    parser.add_argument('csvfile', 
-                            help="Name of the file that holds the list of marks (This can be .csv, .xlsx or .ods)")
-    parser.add_argument('docxfile', 
-                            help="Name of the template file (This can be .docx or .odt)")
+    parser = argparse.ArgumentParser(
+        description='Generate individual reports from a table file (CSV/XLSX/ODS) and a template file (DOCX/ODT). '
+                    'Use {{<var>}} in your template for substitution, e.g. {{VN}} or {{NN}}.',
+        epilog='Version 1.0. © 2023-2025 by Daniel Ache'
+    )
+    parser.add_argument('datafile', 
+        help="Path to the file containing the list of marks (supported: .csv, .xlsx, .ods)")
+    parser.add_argument('templatefile', 
+        help="Path to the template file (supported: .docx, .odt)")
     parser.add_argument('--outputfolder', default='reports',
-                    help='foldername for output files')
-    parser.add_argument('-mr', '--marksreadable', default=0)
+        help='Output folder for generated files (default: reports)')
+    parser.add_argument('-mr', '--marksreadable', type=int, default=0,
+        help='Convert numeric marks to text representation (1 = enabled, 0 = disabled, default: 0)')
 
     args = parser.parse_args()
 
-    csvFilename = args.csvfile
-    docxFilename = args.docxfile
-    outputFolder = args.outputfolder
-    substituteMarks = args.marksreadable
+    datafile = args.datafile
+    templatefile = args.templatefile
+    outputfolder = args.outputfolder
+    marksreadable = args.marksreadable
 
-    if not os.path.exists(csvFilename):
-        print("csv-file: >" + csvFilename + "< does not exits")
+    if not os.path.exists(datafile):
+        print("Data file: >" + datafile + "< does not exist")
         return
-    if not os.path.exists(docxFilename):
-        print("docx-file: >" + docxFilename + "< does not exits")
+    if not os.path.exists(templatefile):
+        print("Template file: >" + templatefile + "< does not exist")
         return
         
-    if not os.path.exists(outputFolder):
-        os.makedirs(outputFolder)
+    if not os.path.exists(outputfolder):
+        os.makedirs(outputfolder)
 
-    marksTable = readMarksFile(csvFilename, substituteMarks)
+    marksTable = readMarksFile(datafile, marksreadable)
     for context in marksTable:
-        createReport(outputFolder, docxFilename, context)
+        createReport(outputfolder, templatefile, context)
 
 if __name__ == "__main__":
     main()
