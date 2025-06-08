@@ -5,6 +5,9 @@
 #
 # https://docxtpl.readthedocs.io/en/latest/
 
+__version_info__ = ('2025','06','08')
+__version__ = '-'.join(__version_info__)
+
 import argparse
 from docxtpl import DocxTemplate
 import zipfile       # needed for patching odt
@@ -130,7 +133,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Generate individual reports from a table file (CSV/XLSX/ODS) and a template file (DOCX/ODT). '
                     'Use {{<var>}} in your template for substitution, e.g. {{VN}} or {{NN}}.',
-        epilog='Version 1.0. © 2023-2025 by Daniel Ache'
+        epilog='© 2023-2025 by Daniel Ache'
     )
     parser.add_argument('datafile', 
         help="Path to the file containing the list of marks (supported: .csv, .xlsx, .ods)")
@@ -140,6 +143,7 @@ def main():
         help='Output folder for generated files (default: reports)')
     parser.add_argument('-mr', '--marksreadable', type=int, default=0,
         help='Convert numeric marks to text representation (1 = enabled, 0 = disabled, default: 0)')
+    parser.add_argument('-v', '--version', action='version', version="%(prog)s ("+__version__+")")
 
     args = parser.parse_args()
 
