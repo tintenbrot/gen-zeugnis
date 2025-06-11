@@ -1,16 +1,16 @@
-VN,NN,AV,SV,DEU,SU,MA,EN,KU,MU,SP,RE,missed,excused,nonexcused,bemerk
-David,Bowie,2,1,2,2,1,2,3,1,2,3,0,0,0,"Sehr kreativ im Unterricht."
-Freddie,Mercury,1,1,1,1,1,1,1,1,2,1,1,2,2,"Beeindruckende Bühnenpräsenz."
-Janis,Joplin,2,2,3,2,2,3,2,1,1,2,0,0,0,"Bringt sich lautstark ein."
-Kurt,Cobain,3,2,2,2,2,2,2,3,2,3,2,1,1,"Ruhig, aber sehr talentiert."
-Amy,Winhouse,2,2,2,2,1,2,2,1,3,2,1,3,2,"Zeigt großes Interesse an Musik."
-Jimi,Hendrix,1,1,1,1,1,2,1,3,2,2,0,0,0,"Sehr einfallsreicher Schüler."
-Elvis,Presley,1,1,1,1,2,1,1,2,2,1,0,0,0,"Gute Mitarbeit und Motivation."
-John,Lennon,2,1,1,2,2,1,2,2,1,2,0,0,0,"Kreative Beiträge im Unterricht."
-George,Harrison,2,2,2,2,2,2,2,3,2,2,1,0,1,"Sehr freundlich zu Mitschülern."
-Jim,Morrison,3,3,2,2,2,2,1,1,1,1,2,2,0,"Manchmal unkonzentriert."
-Whitney,Houston,1,1,1,1,1,2,1,3,1,2,0,0,0,"Sehr engagiert, besonders in Musik."
-Tupac,Shakur,2,2,3,2,2,3,2,2,3,2,1,1,0,"Gute Mitarbeit, manchmal laut."
-Frank,Sinatra,1,1,1,1,2,2,2,2,3,2,0,0,0,"Höflich und respektvoll."
-Prince,Rogers,2,1,1,1,2,1,1,3,2,1,0,0,0,"Zeigt außergewöhnliches Talent."
-Michael,Jackson,1,1,1,1,1,2,2,3,2,1,0,0,0,"Tänzerisch und musikalisch begabt."
+VN,NN,AV,SV,DEU,SU,MA,EN,KU,MU,SP,MORAL,RE,missed,excused,nonexcused,bemerk
+David,Bowie,2,1,2,2,1,2,3,1,2,Religion,3,0,0,0,Sehr kreativ im Unterricht.
+Freddie,Mercury,1,1,1,1,1,1,1,1,2,Religion,1,1,2,2,Beeindruckende Bühnenpräsenz.
+Janis,Joplin,2,2,3,2,2,3,2,1,1,Ethik,2,0,0,0,Bringt sich lautstark ein.
+Kurt,Cobain,3,2,2,2,2,2,2,3,2,Religion,3,2,1,1,"Ruhig, aber sehr talentiert."
+Amy,Winhouse,2,2,2,2,1,2,2,1,3,Religion,2,1,3,2,Zeigt großes Interesse an Musik.
+Jimi,Hendrix,1,1,1,1,1,2,1,3,2,Religion,2,0,0,0,Sehr einfallsreicher Schüler.
+Elvis,Presley,1,1,1,1,2,1,1,2,2,Ethik,1,0,0,0,Gute Mitarbeit und Motivation.
+John,Lennon,2,1,1,2,2,1,2,2,1,Religion,2,0,0,0,Kreative Beiträge im Unterricht.
+George,Harrison,2,2,2,2,2,2,2,3,2,Ethik,2,1,0,1,Sehr freundlich zu Mitschülern.
+Jim,Morrison,3,3,2,2,2,2,1,1,1,Ethik,1,2,2,0,Manchmal unkonzentriert.
+Whitney,Houston,1,1,1,1,1,2,1,3,1,Ethik,2,0,0,0,"Sehr engagiert, besonders in Musik."
+Tupac,Shakur,2,2,3,2,2,3,2,2,3,Religion,2,1,1,0,"Gute Mitarbeit, manchmal laut."
+Frank,Sinatra,1,1,1,1,2,2,2,2,3,Religion,2,0,0,0,Höflich und respektvoll.
+Prince,Rogers,2,1,1,1,2,1,1,3,2,Ethik,1,0,0,0,Zeigt außergewöhnliches Talent.
+Michael,Jackson,1,1,1,1,1,2,2,3,2,Ethik,1,0,0,0,Tänzerisch und musikalisch begabt.
