@@ -102,7 +102,7 @@ def readMarksFile(filename_path, substituteMarks):
         csvDelimiter = detectdelimiter(filename_path)
         print("Detected delimiter: '" + csvDelimiter + "'")
         
-        with open(filename_path, encoding='cp1252') as csvdatei:
+        with open(filename_path, encoding='utf8') as csvdatei:
             csv_reader_object = csv.reader(csvdatei, delimiter=csvDelimiter)
             iRowCount = 0
             for row in csv_reader_object:
