@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Depends: pip3 install docxtpl pandas openpyxl
+# Depends: pip3 install docxtpl pandas openpyxl odfpy
 #
 # https://docxtpl.readthedocs.io/en/latest/
 
