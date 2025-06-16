@@ -5,7 +5,7 @@
 #
 # https://docxtpl.readthedocs.io/en/latest/
 
-__version_info__ = ('2025','06','08')
+__version_info__ = ('2025','06','16')
 __version__ = '-'.join(__version_info__)
 
 import argparse
