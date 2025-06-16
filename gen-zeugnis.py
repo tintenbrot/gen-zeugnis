@@ -9,11 +9,20 @@ __version_info__ = ('2025','06','08')
 __version__ = '-'.join(__version_info__)
 
 import argparse
+import glob
 from docxtpl import DocxTemplate
 import zipfile       # needed for patching odt
 import pandas as pd  # needed for reading xlsx and ods
 import csv
 import os
+
+def find_first_matching(patterns):
+    """Find the first file matching any of the given glob patterns."""
+    for pattern in patterns:
+        matches = glob.glob(pattern)
+        if matches:
+            return matches[0]
+    return None
 
 def detectdelimiter(filename):
     headline = ''
@@ -135,9 +144,9 @@ def main():
                     'Use {{<var>}} in your template for substitution, e.g. {{VN}} or {{NN}}.',
         epilog='© 2023-2025 by Daniel Ache'
     )
-    parser.add_argument('datafile', 
+    parser.add_argument('datafile', nargs='?',
         help="Path to the file containing the list of marks (supported: .csv, .xlsx, .ods)")
-    parser.add_argument('templatefile', 
+    parser.add_argument('templatefile', nargs='?',
         help="Path to the template file (supported: .docx, .odt)")
     parser.add_argument('--outputfolder', default='reports',
         help='Output folder for generated files (default: reports)')
@@ -148,7 +157,23 @@ def main():
     args = parser.parse_args()
 
     datafile = args.datafile
+    if not datafile:
+        datafile = find_first_matching(['*.csv', '*.xlsx', '*.ods'])
+        if datafile:
+            print(f"No datafile argument provided, using file found in current directory: {datafile}")
+        else:
+            print("No data file (.csv, .xlsx, .ods) found in the current directory.")
+            return
+
     templatefile = args.templatefile
+    if not templatefile:
+        templatefile = find_first_matching(['*.docx', '*.odt'])
+        if templatefile:
+            print(f"No templatefile argument provided, using file found in current directory: {templatefile}")
+        else:
+            print("No template file (.docx, .odt) found in the current directory.")
+            return
+
     outputfolder = args.outputfolder
     marksreadable = args.marksreadable
 
