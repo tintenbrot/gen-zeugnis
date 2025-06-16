@@ -150,8 +150,8 @@ def main():
         help="Path to the template file (supported: .docx, .odt)")
     parser.add_argument('--outputfolder', default='reports',
         help='Output folder for generated files (default: reports)')
-    parser.add_argument('-mr', '--marksreadable', type=int, default=0,
-        help='Convert numeric marks to text representation (1 = enabled, 0 = disabled, default: 0)')
+    parser.add_argument('-mr', '--marksreadable', action='store_true',
+        help='If set, numeric marks will be converted to text representation (default: disabled)')
     parser.add_argument('-v', '--version', action='version', version="%(prog)s ("+__version__+")")
 
     args = parser.parse_args()
