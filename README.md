@@ -7,24 +7,28 @@
 - Automatische Zeugnis-Generierung für beliebig viele Schüler:innen
 - Noten und weitere Variablen werden aus einer CSV-, XLSX- oder ODS-Datei übernommen
 - Flexible Word- (.docx) und ODT-Vorlagen mit Platzhaltern (z.B. `{{VN}}` für Vorname)
-- Optional: Noten als Text (z.B. "sehr gut" statt "1"), aktivierbar mit `-mr 1`
-- Fehlzeiten-Erfassung möglich (Spalten: missed, excused, nonexcused)
+- Optional: Noten als Text (z.B. "sehr gut" statt "1"), aktivierbar mit `-mr`
+- Fehlzeiten-Erfassung (Spalten: missed, excused, nonexcused)
 - Ausgabe je Schüler:in als eigene Datei im Zielordner
+- Automatische Datei- und Vorlagenerkennung im aktuellen Verzeichnis, falls keine Argumente übergeben werden
 
 ## Voraussetzungen
 
 - Python 3.x
-- [docxtpl](https://pypi.org/project/docxtpl/), [pandas](https://pypi.org/project/pandas/), [openpyxl](https://pypi.org/project/openpyxl/)
+- [docxtpl](https://pypi.org/project/docxtpl/)
+- [pandas](https://pypi.org/project/pandas/)
+- [openpyxl](https://pypi.org/project/openpyxl/)
+- [odfpy](https://pypi.org/project/odfpy/)
 
 ```bash
-pip3 install docxtpl pandas openpyxl
+pip3 install docxtpl pandas openpyxl odfpy
 ```
 
 ## Nutzung
 
 ### 1. Vorlage erstellen
 
-Lege eine Word- (`.docx`) oder ODT-Datei an, die Platzhalter im Format `{{VARNAME}}` enthält, zum Beispiel für Name, Klasse, Noten etc.:
+Lege eine Word- (`.docx`) oder ODT-Datei an, die Platzhalter im Format `{{VARNAME}}` enthält, z.B.:
 
 ```
 Name: {{VN}} {{NN}}
@@ -36,8 +40,7 @@ Deutsch: {{deutsch}}
 
 ### 2. Daten-Datei anlegen
 
-Erstelle eine CSV-, XLSX- oder ODS-Datei mit den benötigten Spaltennamen als Header.
-Die Spaltennamen müssen zu den Platzhaltern in deiner Vorlage passen. Beispiel für CSV:
+Erstelle eine CSV-, XLSX- oder ODS-Datei mit den benötigten Spaltennamen als Header, passend zu den Platzhaltern. Beispiel für CSV:
 
 ```csv
 VN,NN,klasse,mathe,deutsch,englisch,geburtsdatum,schuljahr,bemerkungen,missed,excused,nonexcused
@@ -51,37 +54,40 @@ python gen-zeugnis.py schueler.csv vorlage.docx --outputfolder=zeugnisse
 ```
 
 - Du kannst auch `.xlsx` oder `.ods` als Eingabedatei nutzen.
-- Optional: Noten als Text ausgeben (`-mr 1`):
+- Optional: Noten als Text ausgeben (`-mr`):
 
 ```bash
-python gen-zeugnis.py schueler.csv vorlage.docx --outputfolder=zeugnisse -mr 1
+python gen-zeugnis.py schueler.csv vorlage.docx --outputfolder=zeugnisse -mr
 ```
+
+**Hinweis:** Werden keine Datei-Argumente übergeben, versucht das Tool automatisch geeignete Daten- und Vorlagendateien im aktuellen Verzeichnis zu finden.
 
 Jede/r Schüler:in erhält eine eigene Datei (benannt nach `NN` und `VN`) im angegebenen Ausgabeordner.
 
 #### Alle Optionen
 
-- `csvfile` (Pfad zur Notenliste, auch `.xlsx` und `.ods` möglich)
-- `docxfile` (Pfad zur Vorlage, `.docx` oder `.odt`)
+- `datafile` (Pfad zur Notenliste, auch `.xlsx` und `.ods` möglich; optional, automatische Suche)
+- `templatefile` (Pfad zur Vorlage, `.docx` oder `.odt`; optional, automatische Suche)
 - `--outputfolder` (Zielordner, Standard: `reports`)
-- `-mr` oder `--marksreadable` (1 = Noten als Text, Standard: 0)
+- `-mr` oder `--marksreadable` (Noten als Text, Standard: Zahlen)
 
 ## Platzhalter
 
 - Für jede Spalte in der Daten-Datei kann ein Platzhalter in der Vorlage verwendet werden (z.B. `{{mathe}}`).
-- Standardmäßig werden Zahlen übernommen, mit `-mr 1` werden Noten in Textform eingesetzt ("sehr gut", "gut", ...).
+- Standardmäßig werden Zahlen übernommen, mit `-mr` werden Noten in Textform eingesetzt ("sehr gut", "gut", ...).
 - Zusätzliche Spalten z.B. für Bemerkungen, Datum, etc. sind möglich.
 - Fehlzeiten können über die Spalten `missed`, `excused`, `nonexcused` erfasst und in der Vorlage platziert werden.
 
 ## Beispiel
 
-Beispiel für eine Zeugnissvorlage und eine passende CSV findest du oben oder kannst sie selbst anpassen.
+Ein Beispiel für eine Zeugnissvorlage und eine passende CSV-Datei findest du oben oder kannst sie selbst anpassen.
 
+## Windows EXE-Datei erzeugen
 
-## Windows EXE-Datei aus .py Datei erzeugen
+Mit [pyinstaller](https://www.pyinstaller.org/):
 
 ```bash
-$ pyinstaller -F gen-zeugnis.py
+pyinstaller -F gen-zeugnis.py
 ```
 
 ---
