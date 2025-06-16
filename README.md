@@ -1,6 +1,6 @@
 # gen-zeugnis
 
-**gen-zeugnis** ist ein Python-Tool, um automatisch Schulzeugnisse im Word-Format (.docx) oder OpenDocument-Format (.odt) aus einer CSV-, XLSX- oder ODS-Datei mit Noten und einer Word-/ODT-Vorlage zu generieren. Es verwendet das Python-Modul [docxtpl](https://docxtpl.readthedocs.io/en/latest/) sowie pandas.
+**gen-zeugnis** ist ein Python-Tool, um automatisch Schulzeugnisse im Word-Format (.docx) oder OpenDocument-Format (.odt) aus einer CSV-, XLSX- oder ODS-Datei mit Noten und einer Word-/ODT-Vorlage zu generieren.
 
 ## Features
 
@@ -94,3 +94,88 @@ pyinstaller -F gen-zeugnis.py
 
 **Autor:** Daniel Ache  
 **Lizenz:** MIT
+
+---
+
+## English Instructions
+
+### Overview
+
+**gen-zeugnis** is a Python tool to automatically generate school reports in Word (.docx) or OpenDocument (.odt) format from a CSV, XLSX, or ODS file containing grades and a Word or ODT template with placeholders.
+
+### Requirements
+
+- Python 3.x
+- [docxtpl](https://pypi.org/project/docxtpl/)
+- [pandas](https://pypi.org/project/pandas/)
+- [openpyxl](https://pypi.org/project/openpyxl/)
+- [odfpy](https://pypi.org/project/odfpy/)
+
+Install all dependencies:
+```bash
+pip3 install docxtpl pandas openpyxl odfpy
+```
+
+### Usage
+
+#### 1. Create a template
+
+Create a Word (`.docx`) or ODT file containing placeholders in the format `{{VARNAME}}`, e.g.:
+```
+Name: {{VN}} {{NN}}
+Class: {{klasse}}
+Math: {{mathe}}
+German: {{deutsch}}
+...
+```
+
+#### 2. Prepare the data file
+
+Create a CSV, XLSX, or ODS file with column names (headers) matching the placeholders. Example CSV:
+```csv
+VN,NN,klasse,mathe,deutsch,englisch,geburtsdatum,schuljahr,bemerkungen,missed,excused,nonexcused
+Max,Mustermann,6a,1,2,2,01.01.2010,2024/2025,"Very motivated.",2,1,1
+```
+
+#### 3. Generate reports
+
+```bash
+python gen-zeugnis.py students.csv template.docx --outputfolder=reports
+```
+
+- You can also use `.xlsx` or `.ods` as input files.
+- Optional: Output grades as text (`-mr`):
+
+```bash
+python gen-zeugnis.py students.csv template.docx --outputfolder=reports -mr
+```
+
+**Note:** If no file arguments are provided, the tool will try to find suitable data and template files automatically in the current directory.
+
+Each student will receive an individual file (named after `NN` and `VN`) in the specified output folder.
+
+#### Options
+
+- `datafile` (path to grades file, `.xlsx` and `.ods` supported; optional, automatic search)
+- `templatefile` (path to template file, `.docx` or `.odt`; optional, automatic search)
+- `--outputfolder` (output folder, default: `reports`)
+- `-mr` or `--marksreadable` (grades as text, default: numbers)
+
+### Placeholders
+
+- Each column in the data file can be used as a placeholder in the template (e.g. `{{mathe}}`).
+- By default, grades are numbers. With `-mr`, grades will be converted to text ("very good", "good", etc.).
+- Additional columns for remarks, dates, etc. are possible.
+- Absences can be tracked using the columns `missed`, `excused`, `nonexcused` and referenced in the template.
+
+### Example
+
+An example template and corresponding CSV file can be found above or adapted to your needs.
+
+### Create a Windows EXE
+
+With [pyinstaller](https://www.pyinstaller.org/):
+
+```bash
+pyinstaller -F gen-zeugnis.py
+```
