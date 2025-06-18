@@ -1,0 +1,4 @@
+docxtpl
+Pandas
+openpyxl
+odfpy
